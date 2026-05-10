@@ -3,11 +3,12 @@
 from anthropic import Anthropic
 from dotenv import load_dotenv
 from log.logger import get_logger
+from typing import Optional
 
 load_dotenv()
 log = get_logger(__name__)
 
-def add_user_message(messages, text):
+def add_user_message(messages: list, text: str):
     log.info(f"Adding user message: {text}")
     user_message = {
         "role": "user",
@@ -15,7 +16,7 @@ def add_user_message(messages, text):
     }
     messages.append(user_message)
 
-def add_assistant_message(messages, text):
+def add_assistant_message(messages: list, text: str):
     log.info(f"Adding assistant message: {text}")
     assistant_message = {
         "role": "assistant",
@@ -23,7 +24,7 @@ def add_assistant_message(messages, text):
     }
     messages.append(assistant_message)
 
-def chat(messages, system=None, stop_sequences=None):
+def chat(messages: list, system: Optional[str]=None, stop_sequences: Optional[list]=None):
     model = "claude-haiku-4-5"
     client = Anthropic()
     params = {
