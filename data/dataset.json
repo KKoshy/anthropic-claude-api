@@ -1,0 +1,52 @@
+[
+    {
+        "task": "Parse an AWS S3 bucket name from an S3 ARN string",
+        "format": "regex",
+        "solution_criteria": "Should correctly extract bucket name from ARNs like 'arn:aws:s3:::my-bucket' or 'arn:aws:s3:::my-bucket/path/to/object'"
+    },
+    {
+        "task": "Validate an AWS IAM role ARN format",
+        "format": "regex",
+        "solution_criteria": "Should match valid IAM role ARNs and reject invalid formats. Valid format: arn:aws:iam::ACCOUNT_ID:role/ROLE_NAME"
+    },
+    {
+        "task": "Extract all AWS region codes from a CloudFormation template JSON",
+        "format": "python",
+        "solution_criteria": "Function should parse JSON and return list of unique regions referenced in the template"
+    },
+    {
+        "task": "Create a minimal AWS Lambda function response JSON object",
+        "format": "json",
+        "solution_criteria": "Should include statusCode (200), headers with Content-Type, and a body with a simple message"
+    },
+    {
+        "task": "Match AWS EC2 instance IDs in logs (format: i-XXXXXXXXX or i-XXXXXXXXXXXXXXXXX)",
+        "format": "regex",
+        "solution_criteria": "Should match valid EC2 instance IDs with 8 or 17 hex characters after 'i-'"
+    },
+    {
+        "task": "Convert a list of AWS tags to a Python dictionary",
+        "format": "python",
+        "solution_criteria": "Function should accept a list of 'Key=Value' strings and return a dictionary, handling edge cases with special characters"
+    },
+    {
+        "task": "Create a basic AWS Secrets Manager secret JSON structure",
+        "format": "json",
+        "solution_criteria": "Should include Name, Description, and SecretString fields with valid JSON formatting"
+    },
+    {
+        "task": "Extract AWS account ID from various ARN formats using regex",
+        "format": "regex",
+        "solution_criteria": "Should capture the 12-digit account ID from standard AWS ARNs (arn:aws:service:region:ACCOUNT_ID:resource)"
+    },
+    {
+        "task": "Filter a list of EC2 instance names to find ones matching a pattern",
+        "format": "python",
+        "solution_criteria": "Function should accept a list of instance names and a pattern string, returning matching instances with wildcard support"
+    },
+    {
+        "task": "Create an AWS DynamoDB item JSON with proper type descriptors",
+        "format": "json",
+        "solution_criteria": "Should include S (string), N (number), and BOOL type descriptors for attributes like id, name, and isActive"
+    }
+]
