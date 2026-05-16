@@ -1,0 +1,102 @@
+[
+    {
+        "test_case": {
+            "task": "Parse an AWS S3 bucket name from an S3 ARN string",
+            "format": "regex",
+            "solution_criteria": "Should correctly extract bucket name from ARNs like 'arn:aws:s3:::my-bucket' or 'arn:aws:s3:::my-bucket/path/to/object'"
+        },
+        "output": "\n{\n  \"regex\": \"arn:aws:s3:::([a-z0-9.-]+)(?:/.*)?$\",\n  \"method\": \"extract group 1\"\n}\n",
+        "reasoning": "The solution provides a working regex that extracts bucket names from standard S3 ARNs in the specified use cases. The pattern is structurally sound and handles both simple bucket references and paths. However, it lacks comprehensive validation of AWS S3 bucket naming constraints. For a production solution, additional validation logic would be needed to ensure the extracted bucket name complies with all AWS requirements. The regex itself is sufficient for basic parsing but incomplete for robust validation.",
+        "score": 8
+    },
+    {
+        "test_case": {
+            "task": "Validate an AWS IAM role ARN format",
+            "format": "regex",
+            "solution_criteria": "Should match valid IAM role ARNs and reject invalid formats. Valid format: arn:aws:iam::ACCOUNT_ID:role/ROLE_NAME"
+        },
+        "output": "\n{\n  \"regex_pattern\": \"^arn:aws:iam::[0-9]{12}:role/[a-zA-Z0-9+=,.@_-]+$\"\n}\n",
+        "reasoning": "The regex correctly validates the core ARN format for simple role ARNs without paths. However, it fails to accommodate path-based roles, which are commonly used in AWS for organizational structure. The character class is appropriate but overly permissive without length constraints. The pattern would reject valid ARNs containing forward slashes in the role path segment.",
+        "score": 8
+    },
+    {
+        "test_case": {
+            "task": "Extract all AWS region codes from a CloudFormation template JSON",
+            "format": "python",
+            "solution_criteria": "Function should parse JSON and return list of unique regions referenced in the template"
+        },
+        "output": "\n{\n  \"approach\": \"regex\",\n  \"pattern\": \"(?:\\\"(us|eu|ap|ca|sa|me|af)-(north|south|east|west|central)?-\\\\d+[a-z]?\\\")\",\n  \"alternative_pattern\": \"arn:aws:[^:]*:[^:]*:(us|eu|ap|ca|sa|me|af)-(north|south|east|west|central)?-\\\\d+[a-z]?\"\n}\n",
+        "reasoning": "The regex patterns demonstrate good understanding of AWS region syntax and cover major use cases. However, the solution is incomplete\u2014it lacks the actual parsing logic, JSON handling, and deduplication required by the criteria. The patterns also have minor coverage gaps for newer AWS regions. To fully meet requirements, this needs to be wrapped in executable code that loads JSON, applies regex, validates results, and returns a unique list.",
+        "score": 7
+    },
+    {
+        "test_case": {
+            "task": "Create a minimal AWS Lambda function response JSON object",
+            "format": "json",
+            "solution_criteria": "Should include statusCode (200), headers with Content-Type, and a body with a simple message"
+        },
+        "output": "\n{\n  \"statusCode\": 200,\n  \"body\": \"{\\\"message\\\": \\\"Hello from Lambda\\\"}\"\n}\n",
+        "reasoning": "The solution demonstrates understanding of AWS Lambda response structure with proper statusCode and body message. However, it fails to meet the explicit evaluation criteria by omitting the required 'headers' object with Content-Type. This is a significant gap since headers are essential for proper HTTP response handling, especially when returning JSON content.",
+        "score": 8
+    },
+    {
+        "test_case": {
+            "task": "Match AWS EC2 instance IDs in logs (format: i-XXXXXXXXX or i-XXXXXXXXXXXXXXXXX)",
+            "format": "regex",
+            "solution_criteria": "Should match valid EC2 instance IDs with 8 or 17 hex characters after 'i-'"
+        },
+        "output": "\n{\n  \"regex\": \"i-[0-9a-f]{8}(?:[0-9a-f]{8})?\"\n}\n",
+        "reasoning": "The regex demonstrates understanding of hex character matching and the optional group concept, but has a critical flaw in quantifier placement. The pattern (?:[0-9a-f]{8})? creates an optional group for the second 8 characters, which is semantically correct, but the lack of anchors and the potential for partial matches significantly undermines the solution. A corrected version would be: 'i-[0-9a-f]{8}(?:[0-9a-f]{8})?\\b' or with stricter boundaries: '^i-(?:[0-9a-f]{8}|[0-9a-f]{16})$'",
+        "score": 7
+    },
+    {
+        "test_case": {
+            "task": "Convert a list of AWS tags to a Python dictionary",
+            "format": "python",
+            "solution_criteria": "Function should accept a list of 'Key=Value' strings and return a dictionary, handling edge cases with special characters"
+        },
+        "output": "\n[\n  {\n    \"input\": \"[{\\\"Key\\\": \\\"Environment\\\", \\\"Value\\\": \\\"Production\\\"}, {\\\"Key\\\": \\\"Team\\\", \\\"Value\\\": \\\"Backend\\\"}]\",\n    \"output\": \"{\\\"Environment\\\": \\\"Production\\\", \\\"Team\\\": \\\"Backend\\\"}\"\n  }\n]\n",
+        "reasoning": "The solution demonstrates the correct output format but fails to meet the stated requirements. The evaluation criteria explicitly requires handling 'Key=Value' strings with special character support, but the solution shows JSON object input instead. Additionally, no actual code implementation is provided\u2014only a test case example. The solution lacks robustness for edge cases and real-world scenarios.",
+        "score": 6
+    },
+    {
+        "test_case": {
+            "task": "Create a basic AWS Secrets Manager secret JSON structure",
+            "format": "json",
+            "solution_criteria": "Should include Name, Description, and SecretString fields with valid JSON formatting"
+        },
+        "output": "\n{\n  \"Name\": \"my-secret\",\n  \"Description\": \"A basic secret for demonstration\",\n  \"SecretString\": \"{\\\"username\\\": \\\"admin\\\", \\\"password\\\": \\\"SecurePassword123!\\\"}\",\n  \"Tags\": [\n    {\n      \"Key\": \"Environment\",\n      \"Value\": \"Development\"\n    }\n  ],\n  \"KmsKeyId\": \"arn:aws:kms:us-east-1:123456789012:key/12345678-1234-1234-1234-123456789012\"\n}\n",
+        "reasoning": "The solution successfully meets the core requirement by including Name, Description, and properly formatted SecretString with valid JSON. However, it includes unnecessary hardcoded credentials and placeholder values that could mislead users about security practices. For a basic demonstration, using placeholder values like '***' or generic tokens would be more appropriate.",
+        "score": 8
+    },
+    {
+        "test_case": {
+            "task": "Extract AWS account ID from various ARN formats using regex",
+            "format": "regex",
+            "solution_criteria": "Should capture the 12-digit account ID from standard AWS ARNs (arn:aws:service:region:ACCOUNT_ID:resource)"
+        },
+        "output": "\n{\n  \"regex_pattern\": \"arn:aws:[^:]*:[^:]*:([0-9]{12}):[^:]*\",\n  \"description\": \"Extracts the 12-digit AWS account ID from ARN strings\"\n}\n",
+        "reasoning": "The regex works for standard ARNs with all fields populated, but fails for common AWS ARN patterns like IAM resources where the region field is empty. The pattern arn:aws:[^:]*:[^:]*:([0-9]{12}) requires a character between the 3rd and 4th colon (region), which breaks for ARNs like 'arn:aws:iam::123456789012:user/name'. A more robust pattern would be 'arn:aws:[^:]*:[^:]*:([0-9]{12}):' or 'arn:aws:.*?:.*?:([0-9]{12}):' to handle variable ARN structures.",
+        "score": 8
+    },
+    {
+        "test_case": {
+            "task": "Filter a list of EC2 instance names to find ones matching a pattern",
+            "format": "python",
+            "solution_criteria": "Function should accept a list of instance names and a pattern string, returning matching instances with wildcard support"
+        },
+        "output": "\n{\n  \"task\": \"Filter EC2 instance names by pattern\",\n  \"solution\": \"regex\"\n}\n",
+        "reasoning": "While regex is a technically sound choice for pattern matching, the solution is presented as a bare concept rather than a functional implementation. The criteria explicitly requires wildcard support (*, ?), but the response provides no code demonstrating how wildcards would be converted to regex patterns or how the function would be structured. A complete solution needs the actual function with proper handling of wildcard syntax, input validation, and clear integration with the stated requirements.",
+        "score": 6
+    },
+    {
+        "test_case": {
+            "task": "Create an AWS DynamoDB item JSON with proper type descriptors",
+            "format": "json",
+            "solution_criteria": "Should include S (string), N (number), and BOOL type descriptors for attributes like id, name, and isActive"
+        },
+        "output": "\n{\n  \"id\": {\n    \"S\": \"12345\"\n  },\n  \"name\": {\n    \"S\": \"John Doe\"\n  },\n  \"age\": {\n    \"N\": \"30\"\n  },\n  \"email\": {\n    \"S\": \"john@example.com\"\n  },\n  \"active\": {\n    \"BOOL\": true\n  },\n  \"tags\": {\n    \"SS\": [\"tag1\", \"tag2\", \"tag3\"]\n  },\n  \"scores\": {\n    \"NS\": [\"100\", \"95\", \"87\"]\n  },\n  \"metadata\": {\n    \"M\": {\n      \"created\": {\n        \"S\": \"2024-01-01\"\n      },\n      \"updated\": {\n        \"S\": \"2024-01-15\"\n      }\n    }\n  },\n  \"items\": {\n    \"L\": [\n      {\n        \"S\": \"item1\"\n      },\n      {\n        \"N\": \"42\"\n      },\n      {\n        \"BOOL\": false\n      }\n    ]\n  },\n  \"binary_data\": {\n    \"B\": \"aGVsbG8gd29ybGQ=\"\n  }\n}\n",
+        "reasoning": "The solution excellently meets and exceeds the evaluation criteria. It includes all required type descriptors (S for strings, N for numbers, BOOL for boolean) in a properly formatted DynamoDB item structure. The id, name, and age attributes specifically meet the criteria with correct type descriptors. The additional complex types demonstrate deeper DynamoDB knowledge, though they weren't explicitly required. The JSON is syntactically correct and production-ready.",
+        "score": 9
+    }
+]
