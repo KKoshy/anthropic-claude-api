@@ -1,0 +1,24 @@
+{
+    "Name": "MyRule",
+    "EventBusName": "default",
+    "EventPattern": {
+        "source": [
+            "aws.ec2"
+        ],
+        "detail-type": [
+            "EC2 Instance State-change Notification"
+        ],
+        "detail": {
+            "state": [
+                "running"
+            ]
+        }
+    },
+    "State": "ENABLED",
+    "Targets": [
+        {
+            "Arn": "arn:aws:lambda:us-east-1:123456789012:function:MyFunction",
+            "Id": "1"
+        }
+    ]
+}
